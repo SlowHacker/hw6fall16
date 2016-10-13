@@ -67,12 +67,13 @@ class MoviesController < ApplicationController
     if @search_terms == nil || @search_terms.strip == ""
       flash[:warning] = "Invalid search term"
       redirect_to movies_path
-    end
-    @movies=Movie.find_in_tmdb(@search_terms)
-    
-    if @movies.empty?
-      flash[:notice] = "No matching movies were found on TMDb"
-      redirect_to movies_path
+    else
+      @movies=Movie.find_in_tmdb(@search_terms)
+      
+      if @movies.empty?
+        flash[:notice] = "No matching movies were found on TMDb"
+        redirect_to movies_path
+      end
     end
   end
   
