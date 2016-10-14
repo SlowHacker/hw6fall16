@@ -26,7 +26,7 @@
         %td= link_to "More about #{movie.title}", movie_path(movie)
 
 %span{:style => "color: maroon; font-weight:bold"} Search for movie titles containing:
-= form_tag search_tmdb_url, :method => :post, :id => 'search_form' do
+= form_tag movies_search_tmdb_path, :method => :post, :id => 'search_form' do
   = text_field_tag :search_terms
   = submit_tag 'Search TMDb'
 = link_to 'Add new movie', new_movie_path
