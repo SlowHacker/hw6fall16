@@ -9,8 +9,11 @@ class Movie::InvalidKeyError < StandardError ; end
     begin
       Tmdb::Api.key("f4702b08c0ac6ea5b51425788bb26562")
       movies = []
-      Tmdb::Movie.find(string).each do |m|
-        movies << {:tmdb_id => m.id, :title => m.title, :rating => self._get_rating(m.id), :release_date => m.release_date}
+      matching_movies = Tmdb::Movie.find(string)
+      if not matching_movies.nil?
+        matching_movies.each do |m|
+          movies << {:tmdb_id => m.id, :title => m.title, :rating => self._get_rating(m.id), :release_date => m.release_date}
+        end
       end
       
       return movies
@@ -22,8 +25,7 @@ class Movie::InvalidKeyError < StandardError ; end
   def self.create_from_tmdb(tmdb_id)
     Tmdb::Api.key("f4702b08c0ac6ea5b51425788bb26562")
     detail = Tmdb::Movie.detail(tmdb_id)
-    
-    Movie.create(title: detail["original_title"], rating: self._get_rating(tmdb_id), release_date: detail["release_date"])
+    Movie.create(title: detail["original_title"], rating: self._get_rating(tmdb_id), description: detail["overview"], release_date: detail["release_date"])
   end
   
   def self._get_rating(tmdb_id)
