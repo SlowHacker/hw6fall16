@@ -23,15 +23,19 @@ class Movie::InvalidKeyError < StandardError ; end
   end
   
   def self.create_from_tmdb(tmdb_id)
-    Tmdb::Api.key("f4702b08c0ac6ea5b51425788bb26562")
-    detail = Tmdb::Movie.detail(tmdb_id)
-    Movie.create(title: detail["original_title"], rating: self._get_rating(tmdb_id), description: detail["overview"], release_date: detail["release_date"])
+    begin
+      Tmdb::Api.key("f4702b08c0ac6ea5b51425788bb26562")
+      detail = Tmdb::Movie.detail(tmdb_id)
+      Movie.create(title: detail["original_title"], rating: self._get_rating(tmdb_id), description: detail["overview"], release_date: detail["release_date"])
+    rescue Tmdb::InvalidApiKeyError
+      raise Movie::InvalidKeyError, 'Invalid API key'
+    end
   end
   
   def self._get_rating(tmdb_id)
     rating = ''
     Tmdb::Movie.releases(tmdb_id)["countries"].each do |r|
-      if r["iso_3166_1"] == "US"
+      if r["iso_3166_1"] == "US" and r["certification"].strip != ""
         rating = r["certification"]
         break
       end
