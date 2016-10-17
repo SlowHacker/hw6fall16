@@ -26,7 +26,10 @@ class Movie::InvalidKeyError < StandardError ; end
     begin
       Tmdb::Api.key("f4702b08c0ac6ea5b51425788bb26562")
       detail = Tmdb::Movie.detail(tmdb_id)
-      Movie.create(title: detail["original_title"], rating: self._get_rating(tmdb_id), description: detail["overview"], release_date: detail["release_date"])
+      rating = self._get_rating(tmdb_id)
+      if not Movie.exists?(:title => detail["original_title"], :rating => rating, :description => detail["overview"])
+        Movie.create(title: detail["original_title"], rating: rating, description: detail["overview"], release_date: detail["release_date"])
+      end
     rescue Tmdb::InvalidApiKeyError
       raise Movie::InvalidKeyError, 'Invalid API key'
     end
