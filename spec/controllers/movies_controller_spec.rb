@@ -75,6 +75,14 @@ describe MoviesController do
       get :index
       expect(response).to render_template('index')
     end
+    it 'should be able to sort by title' do
+      get :index, :sort => 'title'
+      expect(controller.params[:sort]).to eq('title')
+    end
+    it 'should be able to sort by release date' do
+      get :index, :sort => 'release_date'
+      expect(controller.params[:sort]).to eq('release_date')
+    end
   end
   
   movie_attr = {:title => "test title", :rating => "test rating", :description => "test description", :release_date => "1900-01-01"}
@@ -83,7 +91,6 @@ describe MoviesController do
     it "should createa a new movie" do
       expect { post :create, :movie => movie_attr }.to change(Movie, :count).by(1)
     end
-    
     it "should redirect to home page after successful movie creation" do
       post :create, {:movie => movie_attr}
       expect(response).to redirect_to(movies_path)
@@ -102,7 +109,6 @@ describe MoviesController do
         Movie.any_instance.should_receive(:update_attributes!).with(update_param)
         put :update, :id => @movie.id, :movie => update_param
       end
-  
       it "should redirect to the home page after successful updating" do
         allow(Movie).to receive(:update).with(update_param)
         put :update, :id => @movie.id, :movie => update_param
@@ -114,7 +120,6 @@ describe MoviesController do
       it "should delete the chosen movie" do
         expect { delete :destroy, :id => @movie.id}.to change(Movie, :count).by(-1)
       end
-      
       it "should redirect to the home page after successful deleting" do
         delete :destroy, :id => @movie.id
         expect(response).to redirect_to(movies_path)
